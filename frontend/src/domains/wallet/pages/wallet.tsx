@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Button } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import ConnectWallet from '../components/connect-wallet';
 
 export const WalletPage: React.FC = () => {
