@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: pg-school
+    environment:
+      POSTGRES_DB: school_mgmt           # Automatically created
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"                      # Expose PostgreSQL to host
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persist data
+      - ./seed_db:/docker-entrypoint-initdb.d # Auto-run SQL scripts on first run
+
+volumes:
+  pgdata:
