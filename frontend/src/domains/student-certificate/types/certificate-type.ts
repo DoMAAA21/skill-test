@@ -51,3 +51,6 @@ export type AddCertificateResponse = {
 export type GetCertificatesResponse = {
   certificates: CertificateWithId[];
 };
+
+export type CertificateProps = z.infer<typeof CertificateSchema>;
+export type CertificateDataPropsWithId = CertificateProps & { id: number };
