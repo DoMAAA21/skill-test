@@ -9,7 +9,6 @@ const getRoleId = async (roleName) => {
 
 const findAllStudents = async (payload) => {
   const { name, className, section, roll } = payload;
-  console.log(payload);
   let query = `
         SELECT
             t1.id,

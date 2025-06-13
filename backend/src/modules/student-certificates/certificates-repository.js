@@ -22,6 +22,37 @@ const findAllCertificates = async () => {
   return rows;
 };
 
+const insertCertificate = async ({ title, student_id, ipfsHash, certId }) => {
+
+  const findStudentQuery = `
+    SELECT id FROM students WHERE user_id = $1
+  `;
+  const studentResult = await processDBRequest({
+    query: findStudentQuery,
+    queryParams: [student_id],
+  });
+
+  if (studentResult.rows.length === 0) {
+    throw new Error('Student not found for given user_id');
+  }
+
+  const actualStudentId = studentResult.rows[0].id;
+
+  const insertQuery = `
+    INSERT INTO certificates (title, student_id, ipfs_hash, cert_id)
+    VALUES ($1, $2, $3, $4)
+    RETURNING id, title, student_id, ipfs_hash, cert_id
+  `;
+  const queryParams = [title, actualStudentId, ipfsHash, certId];
+  const insertResult = await processDBRequest({ query: insertQuery, queryParams });
+
+  return insertResult.rows[0];
+};
+
+
+
+
 module.exports = {
- findAllCertificates
+  findAllCertificates,
+  insertCertificate
 };

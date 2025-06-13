@@ -32,7 +32,6 @@ export const certificateApi = api.injectEndpoints({
       }),
       invalidatesTags: [Tag.CERTIFICATES]
     }),
-
     updateCertificate: builder.mutation<{ message: string }, CertificateWithId>({
       query: ({ id, ...payload }) => ({
         url: `/certificates/${id}`,

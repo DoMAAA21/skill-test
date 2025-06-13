@@ -1,140 +1,150 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
-  Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  Paper,
-  TextField,
-  Typography
+    Box,
+    Button,
+    MenuItem,
+    Paper,
+    TextField,
+    Typography,
+    InputLabel,
+    Select,
+    FormControl,
 } from '@mui/material';
-import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
-import { Controller, UseFormReturn } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
+import { useForm, Controller } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
-import { getErrorMsg } from '@/utils/helpers/get-error-message';
-import { CertificateProps } from '../types';
-import { useAddCertificateMutation, useUpdateCertificateMutation } from '../api/certificate-api';
-import { useGetSectionsQuery } from '@/domains/section/api';
+import { toast } from 'react-toastify';
 
-type ManageCertificateProps = {
-  id?: number;
-  operation: 'Add' | 'Edit';
-  methods: UseFormReturn<CertificateProps>;
+import { useGetStudentsQuery } from '@/domains/student/api';
+import { useAddCertificateMutation } from '../api/certificate-api';
+
+
+type FormFields = {
+    title: string;
+    student_id: number;
+    file: FileList;
 };
 
-export const ManageCertificate: React.FC<ManageCertificateProps> = ({ id, operation, methods }) => {
-  const { data, isLoading } = useGetSectionsQuery();
-  const [addNewCertificate, { isLoading: isAddingCertificate }] = useAddCertificateMutation();
-  const [updateCertificate, { isLoading: isUpdatingCertificate }] = useUpdateCertificateMutation();
-  const navigate = useNavigate();
+export const ManageCertificate: React.FC = () => {
+    const {
+        control,
+        handleSubmit,
+        register,
+        formState: { errors },
+        reset,
+    } = useForm<FormFields>();
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    getValues,
-    setValue,
-    formState: { errors },
-    reset
-  } = methods;
+    const { data: studentData, isLoading: isLoadingStudents } = useGetStudentsQuery({}); // Provide appropriate query if needed
+    const [addCertificate, { isLoading }] = useAddCertificateMutation();
+    const [fileName, setFileName] = useState<string | null>(null);
+    const navigate = useNavigate();
 
-  const isSectionPresent = (section: string) => {
-    return getValues('sections').includes(section);
-  };
-  const handleChange = (section: string) => {
-    const values = getValues('sections');
-    if (values.includes(section)) {
-      setValue(
-        'sections',
-        values.filter((v) => v !== section)
-      );
-    } else {
-      setValue('sections', [...values, section]);
-    }
-  };
+    const onSubmit = async (data: FormFields) => {
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('student_id', data.student_id.toString());
+        formData.append('file', data.file[0]);
 
-  const handleSave = async (data: CertificateProps) => {
-    try {
-      const { name, sections } = data;
-      const sectionString = sections.length > 0 ? sections.join(',') : '';
-      const result =
-        operation === 'Add'
-          ? await addNewCertificate({ name, sections: sectionString }).unwrap()
-          : await updateCertificate({ id: id!, name, sections: sectionString }).unwrap();
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+        try {
+            const result = await addCertificate(formData as any).unwrap();
+            toast.success(result.message || 'Certificate added successfully');
+            reset();
+            navigate('/app/certificates');
+        } catch (error) {
+            toast.error('Failed to add certificate');
+        }
+    };
 
-      reset();
-      toast.info(result?.message);
-      navigate('/app/certificates');
-    } catch (error) {
-      toast.error(getErrorMsg(error as FetchBaseQueryError | SerializedError).message);
-    }
-  };
+    return (
+        <Box component={Paper} sx={{ p: 3, maxWidth: 500, mx: 'auto' }}>
+            <Typography variant='h6' gutterBottom>
+                Add Certificate
+            </Typography>
 
-  return (
-    <Box component={Paper} sx={{ p: 2 }}>
-      <Typography variant='subtitle1' sx={{ mb: 3 }}>
-        {operation} Certificate
-      </Typography>
-      <form onSubmit={handleSubmit(handleSave)}>
-        <TextField
-          {...register('name')}
-          label='Certificate Name'
-          fullWidth
-          focused
-          size='small'
-          error={!!errors.name}
-          helperText={errors.name?.message}
-        />
-
-        <FormControl sx={{ mt: 2 }}>
-          <FormLabel>Sections</FormLabel>
-          {isLoading ? (
-            <>loading...</>
-          ) : (
-            data?.sections &&
-            data?.sections.map(({ name }) => (
-              <FormGroup key={name}>
-                <Controller
-                  name='sections'
-                  control={control}
-                  render={() => (
-                    <FormControlLabel
-                      label={name}
-                      control={
-                        <Checkbox
-                          size='small'
-                          checked={isSectionPresent(name)}
-                          icon={<CheckBoxOutlineBlank />}
-                          checkedIcon={<CheckBox />}
-                          onChange={() => handleChange(name)}
-                        />
-                      }
-                    />
-                  )}
+            <form onSubmit={handleSubmit(onSubmit)} encType='multipart/form-data'>
+                <TextField
+                    {...register('title', { required: 'Certificate title is required' })}
+                    label='Certificate Title'
+                    fullWidth
+                    margin='normal'
+                    size='small'
+                    error={!!errors.title}
+                    helperText={errors.title?.message}
                 />
-              </FormGroup>
-            ))
-          )}
-        </FormControl>
 
-        <Box textAlign='center'>
-          <LoadingButton
-            type='submit'
-            size='small'
-            variant='contained'
-            sx={{ mt: 4 }}
-            loading={isAddingCertificate || isUpdatingCertificate}
-          >
-            Save
-          </LoadingButton>
+                <FormControl fullWidth margin='normal' size='small' error={!!errors.student_id}>
+                    <InputLabel>Select Student</InputLabel>
+                    <Controller
+                        name='student_id'
+                        control={control}
+                        rules={{ required: 'Student is required' }}
+                        render={({ field }) => (
+                            <Select {...field} label='Select Student'>
+                                {isLoadingStudents ? (
+                                    <MenuItem disabled>Loading...</MenuItem>
+                                ) : (
+                                    studentData?.students.map((student) => (
+                                        <MenuItem key={student.id} value={student.id}>
+                                           {student.name} ({student.email}) 
+                                        </MenuItem>
+                                    ))
+                                )}
+                            </Select>
+                        )}
+                    />
+                </FormControl>
+
+                <FormControl fullWidth margin='normal'>
+                    <Controller
+                        name='file'
+                        control={control}
+                        rules={{ required: 'Certificate file is required' }}
+                        render={({ field }) => (
+                            <>
+                                <Button variant='outlined' component='label'>
+                                    Upload Certificate File
+                                    <input
+                                        type='file'
+                                        hidden
+                                        accept='.pdf,.png,.jpg,.jpeg'
+                                        onChange={(e) => {
+                                            const fileList = e.target.files;
+                                            if (fileList?.[0]) {
+                                                setFileName(fileList[0].name);
+                                                field.onChange(fileList); // ✅ manually set FileList in react-hook-form
+                                            }
+                                        }}
+                                    />
+                                </Button>
+                                {fileName && (
+                                    <Typography variant='body2' sx={{ mt: 1 }}>
+                                        Selected: {fileName}
+                                    </Typography>
+                                )}
+                                {errors.file && (
+                                    <Typography color='error' variant='body2'>
+                                        {errors.file.message}
+                                    </Typography>
+                                )}
+                            </>
+                        )}
+                    />
+                </FormControl>
+
+                <Box textAlign='center'>
+                    <LoadingButton
+                        type='submit'
+                        variant='contained'
+                        loading={isLoading}
+                        sx={{ mt: 3 }}
+                    >
+                        Save
+                    </LoadingButton>
+                </Box>
+            </form>
         </Box>
-      </form>
-    </Box>
-  );
+    );
 };

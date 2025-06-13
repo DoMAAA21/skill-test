@@ -1,5 +1,5 @@
 const { ApiError } = require("../../utils");
-const { findAllCertificates } = require("./certificates-repository");
+const { findAllCertificates, insertCertificate } = require("./certificates-repository");
 
 const getAllCertificates = async (payload) => {
     const certificates = await findAllCertificates(payload);
@@ -9,7 +9,16 @@ const getAllCertificates = async (payload) => {
 
     return certificates;
 }
+const addCertificate = async ({ title, student_id, ipfsHash, certId }) => {
+  const result = await insertCertificate({ title, student_id, ipfsHash, certId });
 
+  if (!result) {
+    throw new ApiError(500, "Failed to insert certificate");
+  }
+
+  return result;
+};
 module.exports = {
-    getAllCertificates
+    getAllCertificates,
+    addCertificate
 };
