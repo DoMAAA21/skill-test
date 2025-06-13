@@ -83,8 +83,20 @@ VALUES
 ('Update student detail', '/api/v1/students/:id', NULL, 'students_parent', NULL, 'api', 'PUT'),
 -- end student
 
+-- start certificates
+('Certificates', 'certificates_parent', 'certificates.svg', NULL, 5, 'menu-screen', NULL),
+('Certificates List', 'certificates', NULL, 'certificates_parent', 1, 'menu-screen', NULL),
+('Add Certificate', 'certificates/add', NULL, 'certificates_parent', 1, 'screen', NULL),
+('View Certificate', 'certificates/:id', NULL, 'certificates_parent', NULL, 'screen', NULL),
+('Edit Certificate', 'certificates/edit/:id', NULL, 'certificates_parent', NULL, 'screen', NULL),
+('Get all certificates', '/api/v1/certificates', NULL, 'certificates_parent', NULL, 'api', 'GET'),
+('Add new certificate', '/api/v1/certificates', NULL, 'certificates_parent', NULL, 'api', 'POST'),
+('Get certificate detail', '/api/v1/certificates/:id', NULL, 'certificates_parent', NULL, 'api', 'GET'),
+('Update certificate detail', '/api/v1/certificates/:id', NULL, 'certificates_parent', NULL, 'api', 'PUT'),
+-- end certificates
+
 -- start communication
-('Communication', 'communication_parent', 'communication.svg', NULL, 5, 'menu-screen', NULL),
+('Communication', 'communication_parent', 'communication.svg', NULL, 6, 'menu-screen', NULL),
 ('Notice Board', 'notices', NULL, 'communication_parent', 1, 'menu-screen', NULL),
 ('Add Notice', 'notices/add', NULL, 'communication_parent', 2, 'menu-screen', NULL),
 ('Manage Notices', 'notices/manage', NULL, 'communication_parent', 3, 'menu-screen', NULL),
@@ -106,7 +118,7 @@ VALUES
 -- end communication
 
 -- start hr
-('Human Resource', 'hr_parent', 'hr.svg', NULL, 6, 'menu-screen', NULL),
+('Human Resource', 'hr_parent', 'hr.svg', NULL, 7, 'menu-screen', NULL),
 ('Staff List', 'staffs', NULL, 'hr_parent', 1, 'menu-screen', NULL),
 ('Add Staff', 'staffs/add', NULL, 'hr_parent', 2, 'menu-screen', NULL),
 ('Departments', 'departments', NULL, 'hr_parent', 3, 'menu-screen', NULL),
@@ -137,7 +149,7 @@ VALUES
 ('Get role permissions', '/api/v1/roles/:id/permissions', NULL, 'access_setting_parent', NULL, 'api', 'GET'),
 ('Add role permissions', '/api/v1/roles/:id/permissions', NULL, 'access_setting_parent', NULL, 'api', 'POST'),
 ('Get role users', '/api/v1/roles/:id/users', NULL, 'access_setting_parent', NULL, 'api', 'GET'),
-('Wallet', 'wallet', 'wallet.svg', NULL, 1, 'menu-screen', NULL)
+('Wallet', 'wallet', 'wallet.svg', NULL, 8, 'menu-screen', NULL)
 -- end access setting 
 ON CONFLICT DO NOTHING;
 

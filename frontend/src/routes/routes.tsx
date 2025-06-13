@@ -26,6 +26,7 @@ import { ErrorPage, NotFound } from '@/components/errors';
 import { MainLayout } from '@/components/layout';
 import { RoleAndPermission } from '@/domains/role-and-permission/pages';
 import { WalletPage } from '@/domains/wallet/pages';
+import { ListCertificates } from '@/domains/student-certificate/pages';
 
 export const routes = [
   {
@@ -42,7 +43,7 @@ export const routes = [
     element: <SetupPasswordPage />,
     errorElement: <ErrorPage message='Error loading password setup page' />
   },
-    
+     
   {
     path: '/app',
     element: (
@@ -72,6 +73,7 @@ export const routes = [
       { path: 'students/add', element: <AddStudent /> },
       { path: 'students/:id', element: <ViewStudent /> },
       { path: 'students/edit/:id', element: <EditStudent /> },
+      { path: 'certificates', element: <ListCertificates /> },
       { path: 'notices', element: <ListNotices /> },
       { path: 'notices/add', element: <AddNotice /> },
       { path: 'notices/:id', element: <ViewNotice /> },
