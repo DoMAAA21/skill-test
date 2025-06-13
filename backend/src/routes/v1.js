@@ -26,7 +26,7 @@ router.use("/leave", authenticateToken, csrfProtection, leaveRoutes);
 router.use("/classes", authenticateToken, csrfProtection, classesRoutes);
 router.use("/class-teachers", authenticateToken, csrfProtection, classTeacherRoutes);
 router.use("/sections", authenticateToken, csrfProtection, sectionRoutes);
-router.use("/students", studentsRoutes);
+router.use("/students",authenticateToken, csrfProtection, studentsRoutes);
 router.use("/notices", authenticateToken, csrfProtection, noticesRoutes);
 router.use("/staffs", authenticateToken, csrfProtection, staffsRoutes);
 router.use("/departments", authenticateToken, csrfProtection, departmentRoutes);
