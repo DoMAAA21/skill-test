@@ -66,12 +66,13 @@ const addStudent = async (payload) => {
     permanent_address,
     father_name,
     father_phone,
+    mother_name,
+    mother_phone,
     guardian_name,
     guardian_phone,
     relation_of_guardian,
   } = payload;
 
-  // Insert into users table
   const userQuery = `
     INSERT INTO users (name, email, is_active, role_id)
     VALUES ($1, $2, $3, $4)
@@ -85,7 +86,6 @@ const addStudent = async (payload) => {
     return { status: false, message: "Failed to create user record." };
   }
 
-  // Insert into students table
   const studentQuery = `
     INSERT INTO students (
       user_id,
@@ -98,11 +98,13 @@ const addStudent = async (payload) => {
       permanent_address,
       father_name,
       father_phone,
+      mother_name,
+      mother_phone,
       guardian_name,
       guardian_phone,
       relation_of_guardian
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
     RETURNING id;
   `;
   const studentParams = [
@@ -116,6 +118,8 @@ const addStudent = async (payload) => {
     permanent_address,
     father_name,
     father_phone,
+    mother_name,
+    mother_phone,
     guardian_name,
     guardian_phone,
     relation_of_guardian
@@ -140,36 +144,40 @@ const addStudent = async (payload) => {
 
 const findStudentDetail = async (id) => {
   const query = `
-        SELECT
-            u.id,
-            u.name,
-            u.email,
-            u.is_active AS "systemAccess",
-            p.phone,
-            p.gender,
-            p.dob,
-            p.class_name AS "class",
-            p.section_name AS "section",
-            p.roll,
-            p.father_name AS "fatherName",
-            p.father_phone AS "fatherPhone",
-            p.mother_name AS "motherName",
-            p.mother_phone AS "motherPhone",
-            p.guardian_name AS "guardianName",
-            p.guardian_phone AS "guardianPhone",
-            p.relation_of_guardian as "relationOfGuardian",
-            p.current_address AS "currentAddress",
-            p.permanent_address AS "permanentAddress",
-            p.admission_dt AS "admissionDate",
-            r.name as "reporterName"
-        FROM users u
-        LEFT JOIN user_profiles p ON u.id = p.user_id
-        LEFT JOIN users r ON u.reporter_id = r.id
-        WHERE u.id = $1`;
+    SELECT
+        u.id,
+        u.name,
+        u.email,
+        u.is_active AS "systemAccess",
+        s.phone,
+        s.gender,
+        s.dob,
+        s.class AS "class",
+        s.section AS "section",
+        s.roll,
+        s.father_name AS "fatherName",
+        s.father_phone AS "fatherPhone",
+        s.mother_name AS "motherName",
+        s.mother_phone AS "motherPhone",
+        s.guardian_name AS "guardianName",
+        s.guardian_phone AS "guardianPhone",
+        s.relation_of_guardian AS "relationOfGuardian",
+        s.current_address AS "currentAddress",
+        s.permanent_address AS "permanentAddress",
+        s.admission_date AS "admissionDate",
+        r.name AS "reporterName",
+        rl.name AS "role"
+    FROM users u
+    LEFT JOIN students s ON u.id = s.user_id
+    LEFT JOIN users r ON u.reporter_id = r.id
+    LEFT JOIN roles rl ON u.role_id = rl.id
+    WHERE u.id = $1;
+  `;
   const queryParams = [id];
   const { rows } = await processDBRequest({ query, queryParams });
   return rows[0];
-}
+};
+
 
 const findStudentToSetStatus = async ({ userId, reviewerId, status }) => {
   const now = new Date();
