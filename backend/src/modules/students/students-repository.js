@@ -140,7 +140,77 @@ const addStudent = async (payload) => {
 };
 
 
+const updateUser = async ({ id, name, email, system_access }) => {
+  const query = `
+    UPDATE users
+    SET name = $1, email = $2, is_active = $3
+    WHERE id = $4;
+  `;
+  const queryParams = [name, email, system_access, id];
+  await processDBRequest({ query, queryParams });
+};
 
+const updateStudentProfile = async ({
+  user_id,
+  gender,
+  dob,
+  phone,
+  className,
+  section,
+  roll,
+  admission_date,
+  current_address,
+  permanent_address,
+  father_name,
+  father_phone,
+  mother_name,
+  mother_phone,
+  guardian_name,
+  guardian_phone,
+  relation_of_guardian
+}) => {
+  const query = `
+    UPDATE students
+    SET
+      gender = $1,
+      dob = $2,
+      phone = $3,
+      class = $4,
+      section = $5,
+      roll = $6,
+      admission_date = $7,
+      current_address = $8,
+      permanent_address = $9,
+      father_name = $10,
+      father_phone = $11,
+      mother_name = $12,
+      mother_phone = $13,
+      guardian_name = $14,
+      guardian_phone = $15,
+      relation_of_guardian = $16
+    WHERE user_id = $17;
+  `;
+  const queryParams = [
+    gender,
+    dob,
+    phone,
+    className,
+    section,
+    roll,
+    admission_date,
+    current_address,
+    permanent_address,
+    father_name,
+    father_phone,
+    mother_name,
+    mother_phone,
+    guardian_name,
+    guardian_phone,
+    relation_of_guardian,
+    user_id
+  ];
+  await processDBRequest({ query, queryParams });
+};
 
 const findStudentDetail = async (id) => {
   const query = `
@@ -214,5 +284,7 @@ module.exports = {
   addStudent,
   findStudentDetail,
   findStudentToSetStatus,
-  findStudentToUpdate
+  findStudentToUpdate,
+  updateUser,
+  updateStudentProfile
 };

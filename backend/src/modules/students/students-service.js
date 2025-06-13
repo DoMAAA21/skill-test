@@ -1,5 +1,5 @@
 const { ApiError, sendAccountVerificationEmail } = require("../../utils");
-const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent, addStudent } = require("./students-repository");
+const { findAllStudents, findStudentDetail, findStudentToSetStatus, addStudent, updateUser, updateStudentProfile } = require("./students-repository");
 const { findUserById } = require("../../shared/repository");
 
 const checkStudentId = async (id) => {
@@ -51,13 +51,53 @@ const addNewStudent = async (payload) => {
 }
 
 const updateStudent = async (payload) => {
-    const result = await addOrUpdateStudent(payload);
-    if (!result.status) {
-        throw new ApiError(500, result.message);
-    }
+    const {
+        id,
+        name,
+        email,
+        system_access,
+        gender,
+        dob,
+        phone,
+        className,
+        section,
+        roll,
+        admission_date,
+        current_address,
+        permanent_address,
+        father_name,
+        father_phone,
+        mother_name,
+        mother_phone,
+        guardian_name,
+        guardian_phone,
+        relation_of_guardian
+    } = payload;
 
-    return { message: result.message };
-}
+    await updateUser({ id, name, email, system_access });
+
+    await updateStudentProfile({
+        user_id: id,
+        gender,
+        dob,
+        phone,
+        className,
+        section,
+        roll,
+        admission_date,
+        current_address,
+        permanent_address,
+        father_name,
+        father_phone,
+        mother_name,
+        mother_phone,
+        guardian_name,
+        guardian_phone,
+        relation_of_guardian
+    });
+
+    return { message: 'Student updated successfully.' };
+};
 
 const setStudentStatus = async ({ userId, reviewerId, status }) => {
     await checkStudentId(userId);
