@@ -1,5 +1,5 @@
 const { ApiError, sendAccountVerificationEmail } = require("../../utils");
-const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent } = require("./students-repository");
+const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent, addStudent } = require("./students-repository");
 const { findUserById } = require("../../shared/repository");
 
 const checkStudentId = async (id) => {
@@ -33,11 +33,11 @@ const addNewStudent = async (payload) => {
     const ADD_STUDENT_AND_EMAIL_SEND_SUCCESS = "Student added and verification email sent successfully.";
     const ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL = "Student added, but failed to send verification email.";
     try {
-        const result = await addOrUpdateStudent(payload);
+        const result = await addStudent(payload);
+        console.log("Add student result:", result);
         if (!result.status) {
             throw new ApiError(500, result.message);
         }
-
         try {
             await sendAccountVerificationEmail({ userId: result.userId, userEmail: payload.email });
             return { message: ADD_STUDENT_AND_EMAIL_SEND_SUCCESS };
@@ -45,6 +45,7 @@ const addNewStudent = async (payload) => {
             return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL }
         }
     } catch (error) {
+        console.error("Error adding student:", error);
         throw new ApiError(500, "Unable to add student");
     }
 }

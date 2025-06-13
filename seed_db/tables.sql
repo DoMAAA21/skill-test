@@ -174,6 +174,28 @@ CREATE TABLE user_leave_policy (
     UNIQUE (user_id, leave_policy_id)
 );
 
+CREATE TABLE students (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  gender VARCHAR(50) NOT NULL,
+  dob DATE,
+  phone VARCHAR(20) NOT NULL,
+  class VARCHAR(100) NOT NULL,
+  section VARCHAR(100),
+  roll VARCHAR(100) NOT NULL,
+  admission_date DATE,
+  current_address TEXT NOT NULL,
+  permanent_address TEXT NOT NULL,
+  father_name VARCHAR(255) NOT NULL,
+  father_phone VARCHAR(20),
+  mother_name VARCHAR(255),
+  mother_phone VARCHAR(20),
+  guardian_name VARCHAR(255) NOT NULL,
+  guardian_phone VARCHAR(20) NOT NULL,
+  relation_of_guardian VARCHAR(100) NOT NULL
+);
+
+
 
 -- functions
 DROP FUNCTION IF EXISTS staff_add_update(JSONB);

@@ -50,6 +50,91 @@ const addOrUpdateStudent = async (payload) => {
     return rows[0];
 }
 
+const addStudent = async (payload) => {
+  const {
+    name,
+    gender,
+    phone,
+    email,
+    className,
+    section,
+    roll,
+    current_address,
+    permanent_address,
+    father_name,
+    father_phone,
+    guardian_name,
+    guardian_phone,
+    relation_of_guardian,
+  } = payload;
+
+  // Insert into users table
+  const userQuery = `
+    INSERT INTO users (name, email, is_active, role_id)
+    VALUES ($1, $2, $3, $4)
+    RETURNING id;
+  `;
+  const userParams = [name, email, true, 3];
+  const { rows: userRows } = await processDBRequest({ query: userQuery, queryParams: userParams });
+
+  const user_id = userRows[0]?.id;
+  if (!user_id) {
+    return { status: false, message: "Failed to create user record." };
+  }
+
+  // Insert into students table
+  const studentQuery = `
+    INSERT INTO students (
+      user_id,
+      gender,
+      phone,
+      class,
+      section,
+      roll,
+      current_address,
+      permanent_address,
+      father_name,
+      father_phone,
+      guardian_name,
+      guardian_phone,
+      relation_of_guardian
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    RETURNING id;
+  `;
+  const studentParams = [
+    user_id,
+    gender,
+    phone,
+    className,
+    section,
+    roll,
+    current_address,
+    permanent_address,
+    father_name,
+    father_phone,
+    guardian_name,
+    guardian_phone,
+    relation_of_guardian
+  ];
+
+  const { rows: studentRows } = await processDBRequest({ query: studentQuery, queryParams: studentParams });
+  const student_id = studentRows[0]?.id;
+
+  if (!student_id) {
+    return { status: false, message: "Failed to create student record." };
+  }
+
+  return {
+    status: true,
+    userId: user_id,
+    studentId: student_id
+  };
+};
+
+
+
+
 const findStudentDetail = async (id) => {
     const query = `
         SELECT
@@ -115,6 +200,7 @@ module.exports = {
     getRoleId,
     findAllStudents,
     addOrUpdateStudent,
+    addStudent,
     findStudentDetail,
     findStudentToSetStatus,
     findStudentToUpdate
