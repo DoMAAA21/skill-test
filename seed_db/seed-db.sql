@@ -136,8 +136,9 @@ VALUES
 ('Get role detail', '/api/v1/roles/:id', NULL, 'access_setting_parent', NULL, 'api', 'GET'),
 ('Get role permissions', '/api/v1/roles/:id/permissions', NULL, 'access_setting_parent', NULL, 'api', 'GET'),
 ('Add role permissions', '/api/v1/roles/:id/permissions', NULL, 'access_setting_parent', NULL, 'api', 'POST'),
-('Get role users', '/api/v1/roles/:id/users', NULL, 'access_setting_parent', NULL, 'api', 'GET')
--- end access setting
+('Get role users', '/api/v1/roles/:id/users', NULL, 'access_setting_parent', NULL, 'api', 'GET'),
+('Wallet', 'wallet', 'wallet.svg', NULL, 1, 'menu-screen', NULL)
+-- end access setting 
 ON CONFLICT DO NOTHING;
 
 ALTER SEQUENCE leave_status_id_seq RESTART WITH 1;

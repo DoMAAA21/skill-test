@@ -25,6 +25,7 @@ import { EditDepartmentPage, ListDepartmentsPage } from '@/domains/department/pa
 import { ErrorPage, NotFound } from '@/components/errors';
 import { MainLayout } from '@/components/layout';
 import { RoleAndPermission } from '@/domains/role-and-permission/pages';
+import { WalletPage } from '@/domains/wallet/pages';
 
 export const routes = [
   {
@@ -41,6 +42,7 @@ export const routes = [
     element: <SetupPasswordPage />,
     errorElement: <ErrorPage message='Error loading password setup page' />
   },
+    
   {
     path: '/app',
     element: (
@@ -55,6 +57,7 @@ export const routes = [
     ),
     children: [
       { index: true, element: <DashboardPage /> },
+      { path: 'wallet', element: <WalletPage /> },
       { path: 'account', element: <AccountPage /> },
       { path: 'leave/define', element: <LeaveDefine /> },
       { path: 'leave/request', element: <MyLeaveRequest /> },
@@ -83,6 +86,7 @@ export const routes = [
       { path: 'departments/edit/:id', element: <EditDepartmentPage /> },
       { path: 'notices/recipients', element: <ListNoticeRecipients /> },
       { path: 'notices/recipients/edit/:id', element: <EditNoticeRecipientPage /> },
+      { path: 'wallets', element: <EditNoticeRecipientPage /> },
       { path: '*', element: <NotFound /> }
     ]
   },
